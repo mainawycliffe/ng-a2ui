@@ -5,6 +5,10 @@ import type { RenderInstruction } from '@shared/schema';
 
 type Props = Extract<RenderInstruction, { component: 'FlightComparisonCard' }>['props'];
 
+/**
+ * Lists available flights for comparison.
+ * Supports highlighting flights under a specific budget as requested by the agent.
+ */
 @Component({
   selector: 'app-flight-comparison-card',
   template: `

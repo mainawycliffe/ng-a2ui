@@ -1,5 +1,15 @@
 import { z } from 'genkit';
 
+/**
+ * SHARED SCHEMA: This file defines the strict data contract between the 
+ * AI Agent (backend) and the Angular UI (frontend).
+ * 
+ * WHY: LLMs are inherently non-deterministic. By using Zod with descriptive 
+ * `.describe()` hints, we provide the LLM with a clear "blueprint" for 
+ * generating structured UI payloads. This ensures the frontend receives 
+ * predictable data that maps exactly to our component inputs.
+ */
+
 const Flight = z
   .object({
     id: z.string().describe('Unique flight code such as "KQ-303" or "JM-902".'),

@@ -67,11 +67,13 @@ export class PaymentCard {
     !this.paying(),
   );
 
+  /** Formats card number input with spaces. */
   onCard(v: string) {
     const digits = v.replace(/\D/g, '').slice(0, 16);
     this.card.set(digits.replace(/(.{4})/g, '$1 ').trim());
   }
 
+  /** Simulates payment processing and emits success to the AgentBus. */
   async pay() {
     if (!this.isValid()) return;
     this.paying.set(true);

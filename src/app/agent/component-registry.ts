@@ -6,6 +6,15 @@ import { PassengerFormCard } from '../components/passenger-form-card';
 import { PaymentCard } from '../components/payment-card';
 import { BookingConfirmationCard } from '../components/booking-confirmation-card';
 
+/**
+ * The COMPONENT_REGISTRY maps string identifiers received from the AI agent 
+ * to actual Angular component classes.
+ * 
+ * WHY: Angular's `NgComponentOutlet` requires a component Type to render. 
+ * Since the AI agent only knows about component names (strings) as defined 
+ * in the shared schema, this registry acts as the essential bridge for 
+ * Server-Driven UI (SDUI).
+ */
 export const COMPONENT_REGISTRY: Record<ComponentName, Type<unknown>> = {
   FlightComparisonCard,
   SeatMapCard,

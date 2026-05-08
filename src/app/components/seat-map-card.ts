@@ -4,6 +4,10 @@ import type { RenderInstruction } from '@shared/schema';
 
 type Props = Extract<RenderInstruction, { component: 'SeatMapCard' }>['props'];
 
+/**
+ * Interactive seat selection grid.
+ * Allows users to pick available seats, with visual distinction for premium options.
+ */
 @Component({
   selector: 'app-seat-map-card',
   template: `
@@ -69,8 +73,10 @@ export class SeatMapCard {
     return `${base} bg-slate-200 hover:bg-slate-300`;
   }
 
+  /** Selects a seat if it is not already occupied. */
   pick(id: string) { if (!this.isOccupied(id)) this.selected.set(id); }
 
+  /** Emits the selected seat ID to the AgentBus. */
   confirm() {
     const id = this.selected();
     if (!id) return;

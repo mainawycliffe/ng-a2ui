@@ -4,6 +4,9 @@ import type { RenderInstruction } from '@shared/schema';
 
 type Props = Extract<RenderInstruction, { component: 'BookingConfirmationCard' }>['props'];
 
+/**
+ * Displays a success message and summary after a booking is finalized.
+ */
 @Component({
   selector: 'app-booking-confirmation-card',
   template: `

@@ -11,6 +11,14 @@ type ChatItem =
   | { kind: 'agent';   text: string }
   | { kind: 'render';  componentName: string };
 
+/**
+ * AiUiHost is the primary orchestration layer for the "a2UI" (Agent-to-UI) experience.
+ * 
+ * WHY: It manages the dual-nature of the interface:
+ * 1. The Chat Transcript: Maintains the conversation history for both the user and the LLM.
+ * 2. The Dynamic Stage: Uses `NgComponentOutlet` to render the "latest" UI instruction 
+ *    from the agent, providing a focused, interactive experience beyond just text.
+ */
 @Component({
   selector: 'app-ai-ui-host',
   imports: [NgComponentOutlet],
@@ -182,6 +190,7 @@ export class AiUiHost implements OnInit {
     await this.callAgent();
   }
 
+  /** Relays UI events (e.g. seat selected) back to the agent as specialized user messages. */
   private async sendEvent(event: AgentEvent) {
     const summary = `event: ${event.type} ${JSON.stringify(event)}`;
     this.hasError.set(false);
@@ -190,6 +199,7 @@ export class AiUiHost implements OnInit {
     await this.callAgent();
   }
 
+  /** Retries the last failed agent request. */
   async retryAgent() {
     this.hasError.set(false);
     // Remove last error message from chat
@@ -203,6 +213,7 @@ export class AiUiHost implements OnInit {
     await this.callAgent();
   }
 
+  /** Orchestrates the API call to the agent and processes the response. */
   private async callAgent() {
     this.loading.set(true);
     try {

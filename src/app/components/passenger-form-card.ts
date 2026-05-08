@@ -12,6 +12,10 @@ const LABELS: Record<string, { label: string; type: string; placeholder: string 
   passport:  { label: 'Passport #', type: 'text',  placeholder: 'A12345678' },
 };
 
+/**
+ * Renders a dynamic form for capturing passenger details.
+ * The fields are driven by the AI agent's requirements.
+ */
 @Component({
   selector: 'app-passenger-form-card',
   template: `
@@ -61,6 +65,7 @@ export class PassengerFormCard {
     this.values.update((v) => ({ ...v, [field]: value }));
   }
 
+  /** Emits the passenger data to the AgentBus for the next step. */
   submit() {
     if (!this.isValid()) return;
     this.bus.emit({
