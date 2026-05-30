@@ -40,9 +40,9 @@ const LABELS: Record<string, { label: string; type: string; placeholder: string 
 
       <button
         (click)="submit()"
-        [disabled]="!isValid()"
+        [disabled]="!isValid() || submitting()"
         class="mt-5 w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white disabled:bg-slate-300"
-      >Continue to payment</button>
+      >{{ submitting() ? 'Processing...' : 'Continue to payment' }}</button>
     </div>
   `,
   imports: [],
@@ -53,9 +53,10 @@ export class PassengerFormCard {
   fields   = input.required<Props['fields']>();
 
   values = signal<Record<string, string>>({});
+  submitting = signal(false);
   private bus = inject(AgentBus);
 
-  isValid = computed(() => this.fields().every((f) => (this.values()[f] ?? '').trim().length > 1));
+  isValid = computed(() => !this.submitting() && this.fields().every((f) => (this.values()[f] ?? '').trim().length > 1));
 
   labelFor(f: string)       { return LABELS[f]?.label ?? f; }
   typeFor(f: string)        { return LABELS[f]?.type ?? 'text'; }
@@ -68,6 +69,7 @@ export class PassengerFormCard {
   /** Emits the passenger data to the AgentBus for the next step. */
   submit() {
     if (!this.isValid()) return;
+    this.submitting.set(true);
     this.bus.emit({
       type: 'PASSENGER_SUBMITTED',
       flightId: this.flightId(),

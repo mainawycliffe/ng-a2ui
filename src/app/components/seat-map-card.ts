@@ -23,7 +23,7 @@ type Props = Extract<RenderInstruction, { component: 'SeatMapCard' }>['props'];
               @let id = row + col;
               <button
                 (click)="pick(id)"
-                [disabled]="isOccupied(id)"
+                [disabled]="isOccupied(id) || submitting()"
                 [class]="seatClass(id)"
               >{{ col }}</button>
               @if (idx === 2) { <span class="w-3"></span> }
@@ -40,9 +40,9 @@ type Props = Extract<RenderInstruction, { component: 'SeatMapCard' }>['props'];
         </div>
         <button
           (click)="confirm()"
-          [disabled]="!selected()"
+          [disabled]="!selected() || submitting()"
           class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white disabled:bg-slate-300"
-        >Confirm {{ selected() }}</button>
+        >{{ submitting() ? 'Confirming...' : 'Confirm ' + (selected() ?? '') }}</button>
       </div>
     </div>
   `,
@@ -56,6 +56,7 @@ export class SeatMapCard {
   premium = input<Props['premium']>([]);
 
   selected = signal<string | null>(null);
+  submitting = signal(false);
   private bus = inject(AgentBus);
 
   rowsArray = computed(() => Array.from({ length: this.rows() }, (_, i) => i + 1));
@@ -74,12 +75,13 @@ export class SeatMapCard {
   }
 
   /** Selects a seat if it is not already occupied. */
-  pick(id: string) { if (!this.isOccupied(id)) this.selected.set(id); }
+  pick(id: string) { if (!this.isOccupied(id) && !this.submitting()) this.selected.set(id); }
 
   /** Emits the selected seat ID to the AgentBus. */
   confirm() {
     const id = this.selected();
-    if (!id) return;
+    if (!id || this.submitting()) return;
+    this.submitting.set(true);
     this.bus.emit({ type: 'SEAT_SELECTED', flightId: this.flightId(), seatId: id });
   }
 }

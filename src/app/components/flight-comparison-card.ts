@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { AgentBus } from '../agent/agent-bus';
 import type { RenderInstruction } from '@shared/schema';
@@ -27,7 +27,8 @@ type Props = Extract<RenderInstruction, { component: 'FlightComparisonCard' }>['
           <li>
             <button
               (click)="select(f)"
-              class="flex w-full items-center justify-between rounded-xl border p-4 text-left transition hover:border-indigo-400 hover:bg-indigo-50"
+              [disabled]="selecting()"
+              class="flex w-full items-center justify-between rounded-xl border p-4 text-left transition hover:border-indigo-400 hover:bg-indigo-50 disabled:opacity-50 disabled:cursor-not-allowed"
               [class.border-emerald-400]="isUnder(f.price)"
               [class.bg-emerald-50]="isUnder(f.price)"
               [class.border-slate-200]="!isUnder(f.price)"
@@ -45,7 +46,7 @@ type Props = Extract<RenderInstruction, { component: 'FlightComparisonCard' }>['
               </div>
               <div class="text-right">
                 <div class="text-lg font-semibold">{{ f.price | number }} KES</div>
-                <div class="text-xs text-indigo-600">Select →</div>
+                <div class="text-xs text-indigo-600">{{ selecting() ? 'Selecting...' : 'Select →' }}</div>
               </div>
             </button>
           </li>
@@ -62,6 +63,7 @@ export class FlightComparisonCard {
   flights = input.required<Props['flights']>();
   highlightUnder = input<Props['highlightUnder']>(undefined);
 
+  selecting = signal(false);
   private bus = inject(AgentBus);
 
   isUnder(price: number) {
@@ -70,6 +72,8 @@ export class FlightComparisonCard {
   }
 
   select(f: Props['flights'][number]) {
+    if (this.selecting()) return;
+    this.selecting.set(true);
     this.bus.emit({ type: 'FLIGHT_SELECTED', flightId: f.id, airline: f.airline, price: f.price });
   }
 }

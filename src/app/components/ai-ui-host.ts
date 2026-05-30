@@ -45,9 +45,10 @@ type ChatItem =
                     </div>
                     <button
                       (click)="retryAgent()"
-                      class="self-start rounded-lg bg-white px-3 py-1 text-xs font-semibold text-red-700 shadow-sm ring-1 ring-inset ring-red-200 hover:bg-red-50"
+                      [disabled]="loading()"
+                      class="self-start rounded-lg bg-white px-3 py-1 text-xs font-semibold text-red-700 shadow-sm ring-1 ring-inset ring-red-200 hover:bg-red-50 disabled:bg-slate-50 disabled:text-red-300 disabled:ring-red-100"
                     >
-                      Try again
+                      {{ loading() ? 'Retrying...' : 'Try again' }}
                     </button>
                   </div>
                 } @else {
