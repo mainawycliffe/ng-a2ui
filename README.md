@@ -2,7 +2,7 @@
 
 A talk-demo prototype showing **agent-driven dynamic UI** in Angular: a Genkit + Gemini 3 Flash backend decides which Angular component to render, and the frontend materializes it via `ngComponentOutlet` from an allow-listed registry.
 
-> Talk: **"More Than Meets the Eye: Building UIs that Transform"** — slides live in [`slides/`](slides/).
+> Talk: **"More Than Meets the Eye: Building UIs that Transform"** — slides live in [`slides/`](slides/) ([PDF](slides.pdf)).
 
 ### What it shows
 
@@ -39,6 +39,8 @@ Then open `http://localhost:4200`. Try:
 | `npm run build` | Production build of the Angular app                   |
 
 ## Running the slides
+
+📄 **Prefer to just read it?** Grab the exported [**`slides.pdf`**](slides.pdf).
 
 The talk deck is a self-contained [Slidev](https://sli.dev) project — its dependencies are isolated from the Angular app.
 
