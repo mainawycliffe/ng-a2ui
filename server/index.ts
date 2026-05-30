@@ -1,7 +1,7 @@
 import { googleAI } from '@genkit-ai/google-genai';
 import cors from 'cors';
 import express from 'express';
-import { genkit, Part, GenkitError } from 'genkit';
+import { genkit, GenkitError, Part } from 'genkit';
 import { AgentRequest, AgentResponse } from './schema';
 
 const ai = genkit({
@@ -42,6 +42,14 @@ Booking flow:
 
 5. After "event: PAYMENT_CONFIRMED" -> component: "BookingConfirmationCard".
    Generate a booking reference like "KQ-7H3K9P".
+
+On-demand (NOT a numbered step):
+- If the user asks to compare options in a table, see a side-by-side, or get a breakdown
+  (e.g. "compare those flights in a table", "show the fare breakdown") -> component: "DataTableCard".
+  Build "columns" (1-6) and "rows" (1-10) from the relevant context.
+  Each row's "cells" array MUST be in the same order as "columns" and have the same length.
+  Use "align": "right" for numeric/price columns. Put extra per-row info (baggage, fare rules,
+  layovers) in the optional "detail" field so the user can expand the row.
 
 Maintain context of the booking (flight, seat, details) throughout the conversation.`;
 

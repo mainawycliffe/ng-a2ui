@@ -106,6 +106,50 @@ const BookingConfirmationProps = z
     'Props object for BookingConfirmationCard. Must be an inline JSON object — never a string.',
   );
 
+const DataTableColumn = z
+  .object({
+    label: z.string().describe('Column header text, e.g. "Airline".'),
+    align: z
+      .enum(['left', 'right'])
+      .optional()
+      .describe('Cell alignment. Use "right" for numeric columns; defaults to "left".'),
+    sortable: z
+      .boolean()
+      .optional()
+      .describe('Whether users can sort by this column. Defaults to true when omitted.'),
+  })
+  .describe('A single table column definition.');
+
+const DataTableRow = z
+  .object({
+    cells: z
+      .array(z.union([z.string(), z.number()]))
+      .describe(
+        'Cell values in the SAME ORDER as columns. Length must equal columns.length.',
+      ),
+    detail: z
+      .string()
+      .optional()
+      .describe('Extra info revealed when the row is expanded, e.g. baggage rules or notes.'),
+  })
+  .describe('A table row; cells map positionally to columns by index.');
+
+const DataTableProps = z
+  .object({
+    title: z.string().optional().describe('Optional table caption shown above the table.'),
+    columns: z
+      .array(DataTableColumn)
+      .min(1)
+      .max(6)
+      .describe('Column definitions, in display order.'),
+    rows: z
+      .array(DataTableRow)
+      .min(1)
+      .max(10)
+      .describe('Table rows. Each row.cells must align to columns by index and match its length.'),
+  })
+  .describe('Props object for DataTableCard. Must be an inline JSON object — never a string.');
+
 export const RenderInstruction = z
   .discriminatedUnion('component', [
     z
@@ -149,6 +193,15 @@ export const RenderInstruction = z
         props: BookingConfirmationProps,
       })
       .describe('Render a booking confirmation. Used after PAYMENT_CONFIRMED.'),
+    z
+      .object({
+        component: z.literal('DataTableCard').describe('Selects the DataTableCard variant.'),
+        message: z.string().describe('One short conversational sentence shown above the card.'),
+        props: DataTableProps,
+      })
+      .describe(
+        'Render a generic sortable + expandable data table. Use on-demand when the user wants to compare items in a table or see a breakdown — not part of the numbered booking flow.',
+      ),
   ])
   .describe(
     'A render instruction. MUST be an inline JSON object with keys component/message/props — never a string and never the literal text "FlightComparisonCard".',
